@@ -10,7 +10,7 @@ Users can send images in .jpg or .png format to identify objects, drawn on them.
 
 ## Run
 
-    `docker-compose up`
+    docker-compose up
 
 Tested only in Linux environment
 
