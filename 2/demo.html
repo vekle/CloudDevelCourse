@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <div id="demo">
+        <h2>Распознавание изображений с помощью resnet.</h2>
+
+        <button id="sel-btn" onclick="selectButtonClicked()">Выберите картинку</button>
+        <button id="snd-btn" onclick="sendButtonClicked()">Отослать</button>
+        <input id="file-input" accept="image/*" type="file" style="display: none;" />
+        <br>
+        <img id="img-area" src="#" width="200" height="200"/>
+        <br>        
+
+        <h4>Результат:</h4>
+        <label type="label" id="result">----</label>
+    </div>
+
+    <script>
+        var file_selector = document.getElementById('file-input');
+        var send_button = document.getElementById('snd-btn');
+        var select_button = document.getElementById('sel-btn');
+        
+        function getSelectedFile() {
+            var files = Array.from(file_selector.files);
+
+            if (files.length == 0) {
+                return null;
+            }
+            return files[0];
+        }
+
+        file_selector.onchange = function () {
+          var file = getSelectedFile();
+          if (file == null) {
+            setStatus("Файл не выбран");
+            return;
+          }
+          var tmpfile = URL.createObjectURL(file);
+          var image_area = document.getElementById('img-area');
+          image_area.src = tmpfile;
+          setStatus("Выбран файл " + file.name);
+        };
+
+        function setStatus(msg) {
+            document.getElementById("result").innerHTML = msg;
+        }
+
+        function selectButtonClicked() {
+            file_selector.click();
+        }
+
+        function inferFile(file) {
+            setStatus("распознавание " + file.name + "...");
+            const xhttp = new XMLHttpRequest();
+            xhttp.onerror = function () {
+                alert(`Ошибка соединения`);
+                setStatus("Ошибка соединения: " + this.statusText);
+            };
+            xhttp.onloadend = function () {
+                setStatus("распознавание успешно: " + this.responseText);
+            }
+            xhttp.open("POST", "http://127.0.0.1:50000/infer/");
+            var form_data = new FormData();
+            form_data.append("file", file);
+            xhttp.send(form_data);
+        }
+        
+        function sendButtonClicked() {
+            var file = getSelectedFile();
+
+            if (file == null) {
+                alert('Выберите файл');
+                return;
+            }
+            inferFile(file);
+        }
+    </script>
+</body>
+</html>
+
