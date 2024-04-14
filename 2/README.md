@@ -15,6 +15,7 @@ Tested only in Linux environment
 
 ## Usage
 
-1. Expose service (kubectl port-forward service/web 50000:50000)
+1. Expose service 
+    kubectl port-forward service/web 50000:50000
 2. Open demo.html
 3. Upload file
